@@ -1,0 +1,140 @@
+name:               stack-hoogle
+version:            0.5
+license:            BSD3
+github:             karamellpelle/stack-hoogle
+license-file:       LICENSE
+#category:           Development
+#author:             Neil Mitchell <ndmitchell@gmail.com>
+#maintainer:         Neil Mitchell <ndmitchell@gmail.com>
+#copyright:          Neil Mitchell 2004-2024
+synopsis:           Haskell API Search
+description: |
+    Hoogle is a Haskell API search engine, which allows you to
+    search many standard Haskell libraries by either function name,
+    or by approximate type signature. stack-haskell is an expanded
+    version that can filter by dependencies
+#homepage:           https://hoogle.haskell.org/
+#bug-reports:        https://github.com/ndmitchell/hoogle/issues
+#tested-with:        GHC==9.8, GHC==9.6, GHC==9.4
+extra-doc-files:
+    - README.md
+    - CHANGES.txt
+extra-source-files:
+    - cbits/*.h
+    - cbits/*.c
+data-files:
+    -  misc/settings.txt
+    -  html/*.js
+    -  html/*.png
+    -  html/*.css
+    -  html/*.xml
+    -  html/*.html
+    -  html/plugin/*.css
+    -  html/plugin/*.js
+    -  html/plugin/*.png
+
+#source-repository head
+#    type:     git
+#    location: https://github.com/ndmitchell/hoogle.git
+dependencies:
+    -  QuickCheck
+    -  aeson
+    -  "base > 4 && < 5"
+    -  blaze-html
+    -  blaze-markup
+    -  binary
+    -  bytestring >= 0.10.2.0
+    -  cmdargs
+    -  conduit >= 1.3.0
+    -  conduit-extra >= 1.2.3.2
+    -  containers >= 0.5
+    -  crypton-connection
+    -  deepseq
+    -  directory
+    -  extra >= 1.6.6
+    -  filepath
+    -  foundation >= 0.0.13
+    -  old-locale
+    -  hashable
+    -  "haskell-src-exts >= 1.22 && < 1.24"
+    -  http-conduit >= 2.3
+    -  http-types
+    -  js-flot
+    -  js-jquery
+    -  mmap
+    -  process-extras
+    -  resourcet
+    -  safe >= 0.3.20
+    -  storable-tuple
+    -  tar
+    -  template-haskell
+    -  text
+    -  time >= 1.5
+    -  transformers
+    -  uniplate
+    -  utf8-string
+    -  vector
+    -  wai
+    -  wai-logger
+    -  warp
+    -  warp-tls
+    -  zlib
+
+
+library:
+    source-dirs:     src
+    language:        Haskell2010
+
+    c-sources:        cbits/text_search.c
+    include-dirs:     cbits
+    #install-includes: include.h
+    cc-options:       -std=c99
+
+    ghc-options:      -fno-state-hack
+    when:
+      - condition: impl(ghc < 8.0)
+        dependencies: semigroups >= 0.18
+
+    exposed-modules:
+        Hoogle
+
+    other-modules:
+        - Paths_stack_hoogle
+        - Action.CmdLine
+        - Action.Generate
+        - Action.Search
+        - Action.Server
+        - Action.Test
+        - Input.Cabal
+        - Input.Download
+        - Input.Haddock
+        - Input.Item
+        - Input.Reorder
+        - Input.Set
+        - Input.Settings
+        - Output.Items
+        - Output.Names
+        - Output.Tags
+        - Output.Types
+        - Query
+        - General.Conduit
+        - General.IString
+        - General.Log
+        - General.Store
+        - General.Str
+        - General.Template
+        - General.Timing
+        - General.Util
+        - General.Web
+
+
+executables:
+    stack-hoogle:             
+        source-dirs:        src
+        main:               Main.hs
+        language:           Haskell2010
+        ghc-options:        -threaded
+
+        dependencies:
+            - "base > 4 && < 5"
+            - stack-hoogle
