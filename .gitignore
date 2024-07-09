@@ -6,3 +6,6 @@ log.txt
 *.prof
 /.stack-work/
 /issues/
+/stack-hoogle.cabal
+/*.lock
+Tmp/

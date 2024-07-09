@@ -17,7 +17,7 @@ import Data.Tuple.Extra
 import qualified Language.Javascript.JQuery as JQuery
 import qualified Language.Javascript.Flot as Flot
 import Data.Version
-import Paths_hoogle
+import Paths_stack_hoogle
 import Data.Maybe
 import Control.Monad.Extra
 import Text.Read

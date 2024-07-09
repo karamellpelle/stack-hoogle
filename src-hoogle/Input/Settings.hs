@@ -14,7 +14,7 @@ import System.FilePath
 import System.IO.Error (isDoesNotExistError)
 import System.IO.Extra
 import qualified Data.Map.Strict as Map
-import Paths_hoogle
+import Paths_stack_hoogle
 
 
 -- | Settings values. Later settings always override earlier settings.

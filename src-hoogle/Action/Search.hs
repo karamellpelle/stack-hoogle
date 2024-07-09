@@ -19,6 +19,7 @@ import qualified Data.Map as Map
 import Data.Maybe
 import qualified Data.Set as Set
 import System.Directory
+import System.Directory.Extra
 import Text.Blaze.Renderer.Utf8
 import Safe
 
@@ -32,35 +33,65 @@ import Output.Tags
 import Output.Types
 import Query
 
+--import Hpack
+--import Hpack.Config
+--
 -- -- generate all
 -- @tagsoup -- generate tagsoup
 -- @tagsoup filter -- search the tagsoup package
 -- filter -- search all
 
 actionSearch :: CmdLine -> IO ()
-actionSearch Search{..} = replicateM_ repeat_ $ -- deliberately reopen the database each time
-    withSearch database $ \store ->
-        if null compare_ then do
-            count' <- pure $ fromMaybe 10 count
-            (q, res) <- pure $ search store $ parseQuery $ unwords query
-            whenLoud $ putStrLn $ "Query: " ++ unescapeHTML (LBS.unpack $ renderMarkup $ renderQuery q)
-            let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) res
-            if null res then
-                putStrLn "No results found"
-             else if info then do
-                 putStr $ targetInfo $ headErr res
-             else do
-                let toShow = if numbers && not info then addCounter shown else shown
-                if | json -> LBS.putStrLn $ JSON.encode $ maybe id take count $ map unHTMLtargetItem res
-                   | jsonl -> mapM_ (LBS.putStrLn . JSON.encode) $ maybe id take count $ map unHTMLtargetItem res
-                   | otherwise -> putStr $ unlines toShow
-                when (hidden /= [] && not json) $ do
-                    whenNormal $ putStrLn $ "-- plus more results not shown, pass --count=" ++ show (count'+10) ++ " to see more"
-        else do
-            let parseType x = case parseQuery x of
-                                  [QueryType t] -> (pretty t, hseToSig t)
-                                  _ -> error $ "Expected a type signature, got: " ++ x
-            putStr $ unlines $ searchFingerprintsDebug store (parseType $ unwords query) (map parseType compare_)
+actionSearch Search{..} = do
+
+    -- TODO: find packages :: [String]:
+    --    * using package.yaml
+    --    * using --packages flag
+
+    --dependencies <- do
+    --    yamlFrom = "./" ++ packageConfig
+    --
+    --    -- copy package.yaml to a temporary directory since Hpack creates a .cabal file :(
+    --    withTempDir $ \dir -> do
+    --        yamlTo = dir </> packageConfig
+    --         
+    --        copyFile yamlFrom yamlTo
+    --        let opts = defaultDecodeOptions { decodeOptionsTarget = yamlTo }
+    --        readPackageConfig opts >>= \case
+    --            Left err     -> exitFail $ "Could not read package configuration (\"package.yaml\"): " ++ err
+    --            Right result -> pure $ packageDependencies $ decodeResultPackage result -- TODO: filter unique
+
+    -- exitFail "file does not exist"
+    -- exitFail "could not read package.yaml: syntax error"
+    -- info: no dependencies (is this a package.yaml stack file (or do you rely entirely on Prelude?)?)
+    -- info: no defined packages, defaults to all
+
+    replicateM_ repeat_ $ -- deliberately reopen the database each time
+        withSearch database $ \store ->
+            if null compare_ then do
+                count' <- pure $ fromMaybe 10 count -- TODO: increase?
+                (q, res) <- pure $ search store $ parseQuery $ unwords query
+                whenLoud $ putStrLn $ "Query: " ++ unescapeHTML (LBS.unpack $ renderMarkup $ renderQuery q)
+                let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) res
+                --let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) $ filterDependencies dependencies $ res
+                if null res then
+                    putStrLn "No results found"
+                 else if info then do
+                     putStr $ targetInfo $ headErr res
+                 else do
+                    let toShow = if numbers && not info then addCounter shown else shown
+                    if | json -> LBS.putStrLn $ JSON.encode $ maybe id take count $ map unHTMLtargetItem res
+                       | jsonl -> mapM_ (LBS.putStrLn . JSON.encode) $ maybe id take count $ map unHTMLtargetItem res
+                       | otherwise -> putStr $ unlines toShow
+                    when (hidden /= [] && not json) $ do
+                        whenNormal $ putStrLn $ "-- plus more results not shown, pass --count=" ++ show (count'+10) ++ " to see more"
+            else do
+                let parseType x = case parseQuery x of
+                                      [QueryType t] -> (pretty t, hseToSig t)
+                                      _ -> error $ "Expected a type signature, got: " ++ x
+                putStr $ unlines $ searchFingerprintsDebug store (parseType $ unwords query) (map parseType compare_)
+    --where
+    --  filterDependencies :: ([Query], [Target]) -> 
 
 -- | Returns the details printed out when hoogle --info is called
 targetInfo :: Target -> String

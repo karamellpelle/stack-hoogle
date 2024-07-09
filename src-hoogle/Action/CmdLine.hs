@@ -11,7 +11,7 @@ module Action.CmdLine(
 import Data.List.Extra
 import Data.Version
 import General.Util
-import Paths_hoogle (version)
+import Paths_stack_hoogle (version)
 import System.Console.CmdArgs
 import System.Directory
 import System.Environment
@@ -33,6 +33,9 @@ data CmdLine
         ,repeat_ :: Int
         ,language :: Language
         ,compare_ :: [String]
+        -- stack:
+        ,stackPackage :: FilePath
+        ,packages :: [String]
         }
     | Generate
         {download :: Maybe Bool
@@ -122,6 +125,9 @@ search_ = Search
     ,repeat_ = 1 &= help "Number of times to repeat (for benchmarking)"
     ,language = enum [x &= explicit &= name (lower $ show x) &= help ("Work with " ++ show x) | x <- enumerate] &= groupname "Language"
     ,compare_ = def &= help "Type signatures to compare against"
+    -- stack
+    ,stackPackage = def &= typFile &= help "package.yaml file (haskellstack)"
+    ,packages = def &= typ "PACKAGE_LIST" &= help "\"package1,...,packageN\""
     } &= help "Perform a search"
 
 generate = Generate

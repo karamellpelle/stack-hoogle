@@ -1,45 +1,30 @@
+spec-version:       0.36.0
 name:               stack-hoogle
 version:            0.5
 license:            BSD3
 github:             karamellpelle/stack-hoogle
 license-file:       LICENSE
-#category:           Development
+category:           Development
 #author:             Neil Mitchell <ndmitchell@gmail.com>
 #maintainer:         Neil Mitchell <ndmitchell@gmail.com>
 #copyright:          Neil Mitchell 2004-2024
-synopsis:           Haskell API Search
+synopsis:           Haskell API Search (using package.yaml)
 description: |
-    Hoogle is a Haskell API search engine, which allows you to
-    search many standard Haskell libraries by either function name,
-    or by approximate type signature. stack-haskell is an expanded
-    version that can filter by dependencies
-#homepage:           https://hoogle.haskell.org/
+    stack-hoogle is an expanded version of Hoogle that takes 
+    'package.yaml' files into account.
 #bug-reports:        https://github.com/ndmitchell/hoogle/issues
 #tested-with:        GHC==9.8, GHC==9.6, GHC==9.4
 extra-doc-files:
     - README.md
     - CHANGES.txt
-extra-source-files:
-    - cbits/*.h
-    - cbits/*.c
-data-files:
-    -  misc/settings.txt
-    -  html/*.js
-    -  html/*.png
-    -  html/*.css
-    -  html/*.xml
-    -  html/*.html
-    -  html/plugin/*.css
-    -  html/plugin/*.js
-    -  html/plugin/*.png
 
 #source-repository head
 #    type:     git
 #    location: https://github.com/ndmitchell/hoogle.git
 dependencies:
     -  QuickCheck
-    -  aeson
-    -  "base > 4 && < 5"
+    -  aeson >= 1.4.3.0
+    -  base >= 4.9 && < 5
     -  blaze-html
     -  blaze-markup
     -  binary
@@ -56,7 +41,7 @@ dependencies:
     -  foundation >= 0.0.13
     -  old-locale
     -  hashable
-    -  "haskell-src-exts >= 1.22 && < 1.24"
+    -  haskell-src-exts >= 1.22 && < 1.24
     -  http-conduit >= 2.3
     -  http-types
     -  js-flot
@@ -80,61 +65,52 @@ dependencies:
     -  warp-tls
     -  zlib
 
+internal-libraries:
+    #custom-hpack:
+    #    source-dirs:    src-hpack/src
+    #    exposed-modules:
+    #      - Hpack
+    #      - Hpack.Config
+    #      - Hpack.Render
+    #      - Hpack.Yaml
+    #    dependencies:
+    #      - Glob >= 0.9.0
+    #      - unordered-containers
+    #      - yaml >= 0.10.0
+    #      - scientific
+    #      - pretty
+    #      - bifunctors
+    #      - cryptonite
+    #      - infer-license >= 0.2.0 && < 0.3
+    #      #- Cabal >= 3.0.0.0
+    #      #- http-types
+    #      #- http-client
+    #      #- http-client-tls
 
-library:
-    source-dirs:     src
-    language:        Haskell2010
+    custom-hoogle:
+        source-dirs:     src-hoogle
+        #dependencies:    custom-hpack
+        language:        Haskell2010
+        c-sources:        cbits/text_search.c
+        include-dirs:     cbits
+        cc-options:       -std=c99
+        ghc-options:      -fno-state-hack
+        #when: # TODO: remove because we have a pinned, modern stack resolver
+        #  - condition: impl(ghc < 8.0)
+        #    dependencies: semigroups >= 0.18
 
-    c-sources:        cbits/text_search.c
-    include-dirs:     cbits
-    #install-includes: include.h
-    cc-options:       -std=c99
-
-    ghc-options:      -fno-state-hack
-    when:
-      - condition: impl(ghc < 8.0)
-        dependencies: semigroups >= 0.18
-
-    exposed-modules:
-        Hoogle
-
-    other-modules:
-        - Paths_stack_hoogle
-        - Action.CmdLine
-        - Action.Generate
-        - Action.Search
-        - Action.Server
-        - Action.Test
-        - Input.Cabal
-        - Input.Download
-        - Input.Haddock
-        - Input.Item
-        - Input.Reorder
-        - Input.Set
-        - Input.Settings
-        - Output.Items
-        - Output.Names
-        - Output.Tags
-        - Output.Types
-        - Query
-        - General.Conduit
-        - General.IString
-        - General.Log
-        - General.Store
-        - General.Str
-        - General.Template
-        - General.Timing
-        - General.Util
-        - General.Web
+        exposed-modules:
+          - Hoogle
+        generated-other-modules: 
+          - Paths_stack_hoogle
 
 
 executables:
     stack-hoogle:             
-        source-dirs:        src
         main:               Main.hs
         language:           Haskell2010
         ghc-options:        -threaded
 
         dependencies:
-            - "base > 4 && < 5"
-            - stack-hoogle
+            - base > 4 && < 5
+            - custom-hoogle

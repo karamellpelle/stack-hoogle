@@ -31,7 +31,7 @@ import Foreign.Ptr
 import Foreign.Storable
 import General.Util
 import Numeric.Extra
-import Paths_hoogle
+import Paths_stack_hoogle
 import Prelude
 import System.IO.Extra
 import System.IO.MMap
