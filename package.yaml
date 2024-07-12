@@ -8,10 +8,10 @@ category:           Development
 #author:             Neil Mitchell <ndmitchell@gmail.com>
 #maintainer:         Neil Mitchell <ndmitchell@gmail.com>
 #copyright:          Neil Mitchell 2004-2024
-synopsis:           Haskell API Search (using package.yaml)
-description: |
-    stack-hoogle is an expanded version of Hoogle that takes 
-    'package.yaml' files into account.
+synopsis:           Haskell API Search (filtering by stack dependencies, i.e. package.yaml files)
+description: >
+  stack-hoogle is an expanded version of Hoogle (https://github.com/ndmitchell/hoogle) 
+  that takes 'package.yaml' files into account.
 #bug-reports:        https://github.com/ndmitchell/hoogle/issues
 #tested-with:        GHC==9.8, GHC==9.6, GHC==9.4
 extra-doc-files:
@@ -66,38 +66,15 @@ dependencies:
     -  zlib
 
 internal-libraries:
-    #custom-hpack:
-    #    source-dirs:    src-hpack/src
-    #    exposed-modules:
-    #      - Hpack
-    #      - Hpack.Config
-    #      - Hpack.Render
-    #      - Hpack.Yaml
-    #    dependencies:
-    #      - Glob >= 0.9.0
-    #      - unordered-containers
-    #      - yaml >= 0.10.0
-    #      - scientific
-    #      - pretty
-    #      - bifunctors
-    #      - cryptonite
-    #      - infer-license >= 0.2.0 && < 0.3
-    #      #- Cabal >= 3.0.0.0
-    #      #- http-types
-    #      #- http-client
-    #      #- http-client-tls
 
     custom-hoogle:
-        source-dirs:     src-hoogle
-        #dependencies:    custom-hpack
-        language:        Haskell2010
-        c-sources:        cbits/text_search.c
-        include-dirs:     cbits
-        cc-options:       -std=c99
-        ghc-options:      -fno-state-hack
-        #when: # TODO: remove because we have a pinned, modern stack resolver
-        #  - condition: impl(ghc < 8.0)
-        #    dependencies: semigroups >= 0.18
+        source-dirs  :  src-hoogle
+        dependencies :  custom-hpack
+        language     :  Haskell2010
+        c-sources    :  cbits/text_search.c
+        include-dirs :  cbits
+        cc-options   :  -std=c99
+        ghc-options  :  -fno-state-hack
 
         exposed-modules:
           - Hoogle

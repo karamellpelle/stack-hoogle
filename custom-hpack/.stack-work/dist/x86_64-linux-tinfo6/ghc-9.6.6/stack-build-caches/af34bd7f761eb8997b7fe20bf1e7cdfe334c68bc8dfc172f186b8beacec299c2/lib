@@ -1,0 +1,60 @@
+? /home/karamellpelle/.stack/programs/x86_64-linux/ghc-tinfo6-9.6.6/lib/ghc-9.6.6/lib/x86_64-linux-ghc-9.6.6/rts-1.0.2/include/ghcversion.h
+: hash: 9032f6afc97dcddfe8c8b306639eb6f456e3f6667f3dd8268681f51bb77c8634
+? /home/karamellpelle/Source/stack-hoogle/custom-hpack/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.6/build/autogen/Paths_custom_hpack.hs
+: hash: 332ff47238d4e8b2e6d575c7fa1ba6278d41b44ebe113028af8d73cb0e4817a5
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/.stack-work/dist/x86_64-linux-tinfo6/ghc-9.6.6/build/autogen/cabal_macros.h:
+  hash: 4f7a3db4c1be7fc8555819c0f82ed64bb374990f0f0039be147ec1b18eb99112
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/CHANGELOG.md:
+  hash: 6dce697913ec6cd9b9b7de1fe73fda6d22a80bb83072419a7519bd6182880bef
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/custom-hpack.cabal:
+  hash: f0a65ffa7d3fabdb90fd54ec72a9b1046fd82954ef1b899b039353748711ffd5
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/package.yaml:
+  hash: 47fc071e9a5e119c464ac4cfef9532e00e264f78646f38382d54437abb98af22
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Data/Aeson/Config/FromValue.hs:
+  hash: ec040892df5376f905b28f45c3becdf9a253ab6fbecd21434e3417cd724f7c7f
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Data/Aeson/Config/Parser.hs:
+  hash: 901f52f3d5b0c7d6a8f23e7ba63380f0857361df2cf0689173a7975e50bfb6f5
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Data/Aeson/Config/Types.hs:
+  hash: 17369d4e6403c4a0770c52e0dd4ae0c6d2ae6a2c5aa26ca19b3d5cabf91677ab
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Data/Aeson/Config/Util.hs:
+  hash: 14f98d50ad07310d2c214af1a2e2bee6384c3c1d1dee29ece008bffd506a3401
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack.hs:
+  hash: 014c6a981e5293d4307628567f1068e7aa0fa49099a4868254a913a3e4866d44
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/CabalFile.hs:
+  hash: 7fafb6ff84d7e12ce9c774bdb730ccfd7586acf5256e41e6d496abe688a9f773
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Config.hs:
+  hash: 30b16e207f1dbadf058f126e58c1fb83255cb1af18894abad0fcdee125998c11
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Defaults.hs:
+  hash: 0ec506025c098223591b2a1a59032e9aa9bfd38be2b08e00b33c077d6dc6d7ec
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Haskell.hs:
+  hash: b2b51e846cdd392879863722949df3d6d43e12eb3dd818e69b88c65f9179410b
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/License.hs:
+  hash: d03419f2bf5f75e34b650e7f4f2cf869ffd43c485f3a9b612f5c13a6b7363418
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Options.hs:
+  hash: a2541605a00a16dec0f41a9592b450bbe0ae98deefd4b83aa5dc68a6735345ed
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Render.hs:
+  hash: e190215f7268c9418c6e2d2b93cdaaa9c26f0088967a20289701fb1f41e6b350
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Render/Dsl.hs:
+  hash: c6291a272946b87881e62effa93023b91a95868510d275add936115fba2c1c3c
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Render/Hints.hs:
+  hash: 7f3195c37af5332e5b91f4e78f6dd8d6248ca8e2665299dfd98969fa107702a9
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/BuildTools.hs:
+  hash: f546fb0854702ac599c2bf5a782ac76fc17244de80a5fddfd31d3d0b81f98022
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/Defaults.hs:
+  hash: e963a8fe8a4c182ec061c1ce01afaff8076804b6211f43110a5fed3b2ce32643
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/Dependencies.hs:
+  hash: 6e5cda5b24f9594c2d6dd73dc08e2d9c9a92065b3e260c4638efc15e3a072e4b
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/DependencyVersion.hs:
+  hash: 69b5a88d39da04de2d96a968d678cac48603268b71ace2abe84d4311c66b9be4
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/Git.hs:
+  hash: 51da93957cc1ecfab7f8e26f5b007f613cdae7c6ab781cce50d0ef9e1cbb335f
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Syntax/ParseDependencies.hs:
+  hash: 9159db3b9f9d8db9c9deddfc9ec307aa85edb452bbe34db95cc123118ae7338a
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Utf8.hs:
+  hash: 9e7e7e5ca9d17b57c75e5027cadcc14ddf44760f0e5114722a7994f13710d5c5
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Util.hs:
+  hash: 8437cf6ccd53e27bf43b8fb480ddbed8d4d6e5efa9b1a7626748b5583406919d
+/home/karamellpelle/Source/stack-hoogle/custom-hpack/src/Hpack/Yaml.hs:
+  hash: 4ef593ec163649decadaf65d57b9b176e04fe38ce0fb44e989f12f5e9f3d9633
+/usr/include/stdc-predef.h:
+  hash: 8db4f65e62cade8ae4d9b77960ee6aee093255acc1b637e3fb37d79179733b15
