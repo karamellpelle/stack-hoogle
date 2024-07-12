@@ -8,6 +8,7 @@ module Action.Search
     ,action_search_test
     ) where
 
+import System.Exit
 import Control.DeepSeq
 import Control.Exception.Extra
 import Control.Monad.Extra
@@ -15,6 +16,7 @@ import qualified Data.Aeson as JSON
 import qualified Data.ByteString.Lazy.Char8 as LBS
 import Data.Functor.Identity
 import Data.List.Extra
+import Data.Ord
 import qualified Data.Map as Map
 import Data.Maybe
 import qualified Data.Set as Set
@@ -33,38 +35,47 @@ import Output.Tags
 import Output.Types
 import Query
 
---import Hpack
---import Hpack.Config
---
+import Hpack
+import Hpack.Config
+import Text.Pretty.Simple
+import Data.Char (toLower)
+
 -- -- generate all
 -- @tagsoup -- generate tagsoup
 -- @tagsoup filter -- search the tagsoup package
 -- filter -- search all
 
+packageDependencies' :: Package -> [(String, DependencyInfo)]
+packageDependencies' Package{..} = nub . sortBy (comparing (lexicographically . fst)) $
+     (concatMap deps packageExecutables)
+  ++ (concatMap deps packageTests)
+  ++ (concatMap deps packageBenchmarks)
+  ++ (concatMap deps packageInternalLibraries)
+  ++ maybe [] deps packageLibrary
+  where
+    deps xs = [(name, info) | (name, info) <- (Map.toList . unDependencies . sectionDependencies) xs]
+    lexicographically x = (map toLower x, x)
+
 actionSearch :: CmdLine -> IO ()
 actionSearch Search{..} = do
 
-    -- TODO: find packages :: [String]:
-    --    * using package.yaml
-    --    * using --packages flag
+    -- TODO: how to filter packages
+    --    * using --stack-project 'project.yaml'
+    --    * using --dependency flag
 
-    --dependencies <- do
-    --    yamlFrom = "./" ++ packageConfig
-    --
-    --    -- copy package.yaml to a temporary directory since Hpack creates a .cabal file :(
-    --    withTempDir $ \dir -> do
-    --        yamlTo = dir </> packageConfig
-    --         
-    --        copyFile yamlFrom yamlTo
-    --        let opts = defaultDecodeOptions { decodeOptionsTarget = yamlTo }
-    --        readPackageConfig opts >>= \case
-    --            Left err     -> exitFail $ "Could not read package configuration (\"package.yaml\"): " ++ err
-    --            Right result -> pure $ packageDependencies $ decodeResultPackage result -- TODO: filter unique
+    dependencies <- do
+        let yamlFile = "./package.yaml"
 
-    -- exitFail "file does not exist"
-    -- exitFail "could not read package.yaml: syntax error"
+        let opts = defaultDecodeOptions { decodeOptionsTarget = yamlFile }
+        readPackageConfig opts >>= \case
+            Left err     -> die err
+            Right result -> pure $ packageDependencies' $ decodeResultPackage result 
+    -- TODO: log messages 
     -- info: no dependencies (is this a package.yaml stack file (or do you rely entirely on Prelude?)?)
     -- info: no defined packages, defaults to all
+    --
+    pPrint dependencies
+
 
     replicateM_ repeat_ $ -- deliberately reopen the database each time
         withSearch database $ \store ->

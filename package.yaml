@@ -8,27 +8,31 @@ category:           Development
 #author:             Neil Mitchell <ndmitchell@gmail.com>
 #maintainer:         Neil Mitchell <ndmitchell@gmail.com>
 #copyright:          Neil Mitchell 2004-2024
-synopsis:           Haskell API Search (filtering by stack dependencies, i.e. package.yaml files)
+synopsis:           Haskell API Search (filtered by stack project dependencies)
 description: >
   stack-hoogle is an expanded version of Hoogle (https://github.com/ndmitchell/hoogle) 
   that takes 'package.yaml' files into account.
-#bug-reports:        https://github.com/ndmitchell/hoogle/issues
-#tested-with:        GHC==9.8, GHC==9.6, GHC==9.4
+bug-reports:        https://github.com/karamellpelle/stack-hoogle/issues
+
+
+
+# TODO: use GHC2024 when stackage includes (9.10.1 <= GHC), and bump 
+#       resolver in stack.yaml
+#language: GHC2024
+language: GHC2021
+
+dependencies:
+   - base
+
 extra-doc-files:
     - README.md
     - CHANGES.txt
-
-#source-repository head
-#    type:     git
-#    location: https://github.com/ndmitchell/hoogle.git
-
-#dependencies:
 
 internal-libraries:
 
     custom-hoogle:
         source-dirs  :  src-hoogle
-        language     :  Haskell2010
+        #language     :  Haskell2010
         c-sources    :  cbits/text_search.c
         include-dirs :  cbits
         cc-options   :  -std=c99
@@ -40,7 +44,6 @@ internal-libraries:
         dependencies :  
           - QuickCheck
           - aeson 
-          - base
           - blaze-html
           - blaze-markup
           - binary
@@ -81,13 +84,13 @@ internal-libraries:
           - warp-tls
           - zlib
           - hpack
+          - pretty-simple
 
 executables:
     stack-hoogle:             
         main:               Main.hs
-        language:           Haskell2010
+        #language:           Haskell2010
         ghc-options:        -threaded
 
         dependencies:
-            - base
             - custom-hoogle
