@@ -13,7 +13,9 @@ description: >
   stack-hoogle is an expanded version of Hoogle (https://github.com/ndmitchell/hoogle) 
   that takes 'package.yaml' files into account.
 bug-reports:        https://github.com/karamellpelle/stack-hoogle/issues
-
+extra-doc-files:
+    - README.md
+    - CHANGES.txt
 
 
 # TODO: use GHC2024 when stackage includes (9.10.1 <= GHC), and bump 
@@ -24,15 +26,10 @@ language: GHC2021
 dependencies:
    - base
 
-extra-doc-files:
-    - README.md
-    - CHANGES.txt
-
 internal-libraries:
 
     custom-hoogle:
         source-dirs  :  src-hoogle
-        #language     :  Haskell2010
         c-sources    :  cbits/text_search.c
         include-dirs :  cbits
         cc-options   :  -std=c99
@@ -89,7 +86,6 @@ internal-libraries:
 executables:
     stack-hoogle:             
         main:               Main.hs
-        #language:           Haskell2010
         ghc-options:        -threaded
 
         dependencies:

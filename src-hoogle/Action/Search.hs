@@ -45,7 +45,14 @@ import Data.Char (toLower)
 -- @tagsoup filter -- search the tagsoup package
 -- filter -- search all
 
-packageDependencies' :: Package -> [(String, DependencyInfo)]
+type Deps = [(String, DependencyInfo)]
+
+
+--------------------------------------------------------------------------------
+-- hpack
+
+-- | we need a custom variant that takes internal libraries into account
+packageDependencies' :: Package -> Deps
 packageDependencies' Package{..} = nub . sortBy (comparing (lexicographically . fst)) $
      (concatMap deps packageExecutables)
   ++ (concatMap deps packageTests)
@@ -56,6 +63,11 @@ packageDependencies' Package{..} = nub . sortBy (comparing (lexicographically . 
     deps xs = [(name, info) | (name, info) <- (Map.toList . unDependencies . sectionDependencies) xs]
     lexicographically x = (map toLower x, x)
 
+
+--------------------------------------------------------------------------------
+--  
+
+
 actionSearch :: CmdLine -> IO ()
 actionSearch Search{..} = do
 
@@ -63,28 +75,29 @@ actionSearch Search{..} = do
     --    * using --stack-project 'project.yaml'
     --    * using --dependency flag
 
-    dependencies <- do
+    deps <- do
         let yamlFile = "./package.yaml"
 
         let opts = defaultDecodeOptions { decodeOptionsTarget = yamlFile }
         readPackageConfig opts >>= \case
             Left err     -> die err
             Right result -> pure $ packageDependencies' $ decodeResultPackage result 
-    -- TODO: log messages 
+
+    -- TODO: log messages :
     -- info: no dependencies (is this a package.yaml stack file (or do you rely entirely on Prelude?)?)
     -- info: no defined packages, defaults to all
-    --
-    pPrint dependencies
 
+    --pPrint deps
 
     replicateM_ repeat_ $ -- deliberately reopen the database each time
         withSearch database $ \store ->
             if null compare_ then do
                 count' <- pure $ fromMaybe 10 count -- TODO: increase?
                 (q, res) <- pure $ search store $ parseQuery $ unwords query
+                -- ^ ([Query], [Target])
                 whenLoud $ putStrLn $ "Query: " ++ unescapeHTML (LBS.unpack $ renderMarkup $ renderQuery q)
-                let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) res
-                --let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) $ filterDependencies dependencies $ res
+                --let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) res
+                let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) $ filterByDeps deps $ res
                 if null res then
                     putStrLn "No results found"
                  else if info then do
@@ -101,8 +114,16 @@ actionSearch Search{..} = do
                                       [QueryType t] -> (pretty t, hseToSig t)
                                       _ -> error $ "Expected a type signature, got: " ++ x
                 putStr $ unlines $ searchFingerprintsDebug store (parseType $ unwords query) (map parseType compare_)
-    --where
-    --  filterDependencies :: ([Query], [Target]) -> 
+    where
+      -- if 'deps' is empty, then use all packages (original behaviour), otherwise
+      -- only take those that we have in our package dependencies
+      filterByDeps :: Deps -> [Target] -> [Target]
+      filterByDeps deps ts = case deps of 
+          []    -> ts
+          ds    -> (flip filter) ts $ \target -> 
+                    case targetPackage target of 
+                        Nothing               -> False
+                        Just (tgtName, _url)  -> any (\(pkgName, _) -> pkgName == tgtName) deps
 
 -- | Returns the details printed out when hoogle --info is called
 targetInfo :: Target -> String
