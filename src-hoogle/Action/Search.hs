@@ -69,8 +69,9 @@ packageDependencies' Package{..} = nub . sortBy (comparing (lexicographically . 
 
 
 actionSearch :: CmdLine -> IO ()
-actionSearch Search{..} = do
+actionSearch s@Search{..} = do
 
+    pPrint s
     -- TODO: how to filter packages
     --    * using --stack-project 'project.yaml'
     --    * using --dependency flag

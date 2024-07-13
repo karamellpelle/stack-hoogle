@@ -20,8 +20,11 @@ import System.FilePath
 data Language = Haskell | Frege deriving (Data,Typeable,Show,Eq,Enum,Bounded)
 
 data CmdLine
-    = Search
-        {color :: Maybe Bool
+    = Search {
+        -- stack-hoogle:
+         stackPackageYAML :: FilePath
+        ,stackDependencies :: [String]
+        ,color :: Maybe Bool
         ,json :: Bool
         ,jsonl :: Bool
         ,link :: Bool
@@ -31,11 +34,9 @@ data CmdLine
         ,count :: Maybe Int
         ,query :: [String]
         ,repeat_ :: Int
+        -- 
         ,language :: Language
         ,compare_ :: [String]
-        -- stack:
-        ,stackPackage :: FilePath
-        ,packages :: [String]
         }
     | Generate
         {download :: Maybe Bool
@@ -109,26 +110,27 @@ defaultGenerate = generate{language=Haskell}
 
 
 cmdLineMode = cmdArgsMode $ modes [search_ &= auto,generate,server,replay,test]
-    &= verbosity &= program "hoogle"
-    &= summary ("Hoogle " ++ showVersion version ++ ", https://hoogle.haskell.org/")
+    &= verbosity &= program "stack-hoogle"
+    &= summary ("stack-hoogle " ++ showVersion version ++ ", https://github.com/karamellpelle/stack-hoogle")
 
-search_ = Search
-    {color = def &= name "colour" &= help "Use colored output (requires ANSI terminal)"
-    ,json = def &= name "json" &= help "Get result as JSON"
-    ,jsonl = def &= name "jsonl" &= help "Get result as JSONL (JSON Lines)"
-    ,link = def &= help "Give URL's for each result"
-    ,numbers = def &= help "Give counter for each result"
-    ,info = def &= help "Give extended information about the first result"
-    ,database = def &= typFile &= help "Name of database to use (use .hoo extension)"
-    ,count = Nothing &= name "n" &= help "Maximum number of results to return (defaults to 10)"
-    ,query = def &= args &= typ "QUERY"
-    ,repeat_ = 1 &= help "Number of times to repeat (for benchmarking)"
-    ,language = enum [x &= explicit &= name (lower $ show x) &= help ("Work with " ++ show x) | x <- enumerate] &= groupname "Language"
-    ,compare_ = def &= help "Type signatures to compare against"
-    -- stack
-    ,stackPackage = def &= typFile &= help "package.yaml file (haskellstack)"
-    ,packages = def &= typ "PACKAGE_LIST" &= help "\"package1,...,packageN\""
-    } &= help "Perform a search"
+search_ = Search {
+        -- stack
+          stackPackageYAML = def &= name "package-yaml"&=explicit&= typFile &= help "hpack package file (i.e. package.yaml)" 
+        , stackDependencies = def &= name "dependencies"&=explicit&= typ "LIST" &= help "dependencies as a quoted list: \"package1 ... packageN\""
+        -- hoogle
+        , color = def &= name "colour" &= help "Use colored output (requires ANSI terminal)"
+        , json = def &= name "json" &= help "Get result as JSON"
+        , jsonl = def &= name "jsonl" &= help "Get result as JSONL (JSON Lines)"
+        , link = def &= help "Give URL's for each result"
+        , numbers = def &= help "Give counter for each result"
+        , info = def &= help "Give extended information about the first result"
+        , database = def &= typFile &= help "Name of database to use (use .hoo extension)"
+        , count = Nothing &= name "n" &= help "Maximum number of results to return (defaults to 10)"
+        , query = def &= args &= typ "QUERY"
+        , repeat_ = 1 &= help "Number of times to repeat (for benchmarking)"
+        , language = enum [x &= explicit &= name (lower $ show x) &= help ("Work with " ++ show x) | x <- enumerate] &= groupname "Language"
+        , compare_ = def &= help "Type signatures to compare against"
+        } &= help "Perform a search"
 
 generate = Generate
     {download = def &= help "Download all files from the web"
