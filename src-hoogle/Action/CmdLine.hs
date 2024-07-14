@@ -115,10 +115,10 @@ cmdLineMode = cmdArgsMode $ modes [search_ &= auto,generate,server,replay,test]
 
 search_ = Search {
         -- stack
-          stackPackageYAML = def &= name "package-yaml"&=explicit&= typFile &= help "hpack package file (i.e. package.yaml)" 
-        , stackDependencies = def &= name "dependencies"&=explicit&= typ "LIST" &= help "dependencies as a quoted list: \"package1 ... packageN\""
+          stackPackageYAML = def &= name "package-yaml"&=explicit&= typFile &= help "hpack file (i.e. package.yaml)" &= groupname "Filter"
+        , stackDependencies = def &= name "dep"&=explicit&= typ "PACKAGE" &= help "dependency (can be used multiple times)" 
         -- hoogle
-        , color = def &= name "colour" &= help "Use colored output (requires ANSI terminal)"
+        , color = def &= name "colour" &= help "Use colored output (requires ANSI terminal)" &= groupname "Hoogle"
         , json = def &= name "json" &= help "Get result as JSON"
         , jsonl = def &= name "jsonl" &= help "Get result as JSONL (JSON Lines)"
         , link = def &= help "Give URL's for each result"

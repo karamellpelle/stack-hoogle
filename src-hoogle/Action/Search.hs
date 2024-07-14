@@ -71,22 +71,20 @@ packageDependencies' Package{..} = nub . sortBy (comparing (lexicographically . 
 actionSearch :: CmdLine -> IO ()
 actionSearch s@Search{..} = do
 
-    pPrint s
-    -- TODO: how to filter packages
-    --    * using --stack-project 'project.yaml'
-    --    * using --dependency flag
+    --pPrint s
 
-    deps <- do
-        let yamlFile = "./package.yaml"
+    -- retrieve packages for filtering result, if any
+    deps <- fmap (addDeps stackDependencies) $ do
+        case stackPackageYAML of 
+            ""  -> pure []
+            _   -> do
 
-        let opts = defaultDecodeOptions { decodeOptionsTarget = yamlFile }
-        readPackageConfig opts >>= \case
-            Left err     -> die err
-            Right result -> pure $ packageDependencies' $ decodeResultPackage result 
+              let opts = defaultDecodeOptions { decodeOptionsTarget = stackPackageYAML }
+              readPackageConfig opts >>= \case
+                  Left err     -> die err
+                  Right result -> pure $ packageDependencies' $ decodeResultPackage result 
 
-    -- TODO: log messages :
-    -- info: no dependencies (is this a package.yaml stack file (or do you rely entirely on Prelude?)?)
-    -- info: no defined packages, defaults to all
+    -- TODO: log if verbose: "no defined dependencies, defaults to all"
 
     --pPrint deps
 
@@ -96,8 +94,9 @@ actionSearch s@Search{..} = do
                 count' <- pure $ fromMaybe 10 count -- TODO: increase?
                 (q, res) <- pure $ search store $ parseQuery $ unwords query
                 -- ^ ([Query], [Target])
+
                 whenLoud $ putStrLn $ "Query: " ++ unescapeHTML (LBS.unpack $ renderMarkup $ renderQuery q)
-                --let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) res
+
                 let (shown, hidden) = splitAt count' $ nubOrd $ map (targetResultDisplay link) $ filterByDeps deps $ res
                 if null res then
                     putStrLn "No results found"
@@ -116,6 +115,7 @@ actionSearch s@Search{..} = do
                                       _ -> error $ "Expected a type signature, got: " ++ x
                 putStr $ unlines $ searchFingerprintsDebug store (parseType $ unwords query) (map parseType compare_)
     where
+
       -- if 'deps' is empty, then use all packages (original behaviour), otherwise
       -- only take those that we have in our package dependencies
       filterByDeps :: Deps -> [Target] -> [Target]
@@ -125,6 +125,12 @@ actionSearch s@Search{..} = do
                     case targetPackage target of 
                         Nothing               -> False
                         Just (tgtName, _url)  -> any (\(pkgName, _) -> pkgName == tgtName) deps
+
+      addDeps :: [String] -> Deps -> Deps
+      addDeps deps = (<>) (fmap (\pkg -> (pkg, emptyDepInfo)) deps)
+
+      emptyDepInfo = DependencyInfo [] (DependencyVersion Nothing AnyVersion)
+
 
 -- | Returns the details printed out when hoogle --info is called
 targetInfo :: Target -> String
